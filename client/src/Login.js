@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-export default function Signup({ register }) {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -16,7 +16,20 @@ export default function Signup({ register }) {
   };
 
   const submitHandler = () => {
-    register({ username, email, password });
+    // validate inputs
+
+    axios
+      .post("/api/login", {
+        username,
+        email,
+        password,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -40,7 +53,7 @@ export default function Signup({ register }) {
         value={password}
       />
       <button type="button" onClick={submitHandler}>
-        sign up
+        login
       </button>
     </div>
   );
