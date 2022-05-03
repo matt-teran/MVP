@@ -1,59 +1,23 @@
-const webpack = require('webpack');
-const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require("path");
 
-const config = {
-  entry: [
-    './src/index.tsx'
-  ],
+module.exports = {
+  mode: "development",
+  entry: "./client/src/index.js",
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    path: path.join(__dirname, 'client/dist'),
+    filename: "bundle.js"
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        use: 'babel-loader',
-        exclude: /node_modules/
+        test: /\.(jsx|js)$/,
+        exclude: /node_modules/,
+        loader: "babel-loader"
       },
       {
-        test: /\.ts(x)?$/,
-        loader: 'ts-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader'
-        ]
+        test: /\.css$/,
+        use: ['style-loader','css-loader']
       }
     ]
   },
-  devServer: {
-    'static': {
-      directory: './dist'
-    }
-  },
-  plugins: [
-    new CopyPlugin({
-      patterns: [{ from: 'index.html' }],
-    }),
-    new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
-    new CleanWebpackPlugin()
-  ],
-  resolve: {
-    extensions: [
-      '.tsx',
-      '.ts',
-      '.js'
-    ],
-    alias: {
-    }
-  }
-};
-
-module.exports = config;
+}

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import moment from "moment";
 import Stopwatch from "./Stopwatch";
-import "./App.scss";
+import "./App.css";
 
 function App() {
   const [time, setTime] = useState(moment().startOf("date"));
   const [isStudying, setIsStudying] = useState(false);
-  const [timerId, setTimerId] = useState<number>();
+  const [timerId, setTimerId] = useState();
 
   const toggleTimer = () => {
     if (isStudying) {

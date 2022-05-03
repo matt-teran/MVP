@@ -25,8 +25,6 @@ This web app will be a lightweight productivity companion that aims to improve e
 
 ## Technologies
 
-- TypeScript
-
 ### Frontend
 
 - NextJS?
