@@ -11,5 +11,5 @@ mongoose.connection.on("error", function (err) {
 });
 
 module.exports = {
-  User: require('./models/User');
-}
+  User: require("./models/User"),
+};
