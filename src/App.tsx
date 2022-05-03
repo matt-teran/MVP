@@ -1,25 +1,35 @@
 import React, { useState } from "react";
 import moment from "moment";
 import Stopwatch from "./Stopwatch";
-import "./App.css";
+import "./App.scss";
 
 function App() {
-  const [startTime, setStartTime] = useState(moment());
-  const [time, setTime] = useState(moment());
+  const [time, setTime] = useState(moment().startOf("date"));
+  const [isStudying, setIsStudying] = useState(false);
   const [timerId, setTimerId] = useState<number>();
+
   const toggleTimer = () => {
-    incrementStopwatch();
-  };
-  const incrementStopwatch = () => {
-    setTimeout(() => {
-      setTime(moment());
+    if (isStudying) {
+      clearTimeout(timerId);
+    } else {
       incrementStopwatch();
-    }, 1000);
+    }
+    setIsStudying((prevIsStudying) => !prevIsStudying);
   };
+
+  const incrementStopwatch = () => {
+    setTimerId(
+      window.setTimeout(() => {
+        setTime(time.add(1, "s"));
+        incrementStopwatch();
+      }, 1000)
+    );
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <Stopwatch time={time} startTime={startTime} />
+        <Stopwatch time={time} />
         <button type="button" onClick={toggleTimer}>
           Study
         </button>
