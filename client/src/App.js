@@ -30,7 +30,7 @@ function App() {
         toggleSession();
       }
     } else {
-      setBreakTime(5000);
+      setBreakTime(300000);
     }
   }, [isBreakTime, breakTime]);
 
@@ -114,7 +114,10 @@ function App() {
       .post("/api/signup", form)
       .then((response) => {
         console.log(response);
-        setLoggedIn(true);
+        if (response.data.success) {
+          setTime(0);
+          setLoggedIn(true);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -151,8 +154,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Signup register={registerHandler} />
-        <Login login={loginHandler} />
+        {/* <Signup register={registerHandler} />
+        <Login login={loginHandler} /> */}
+        <a href="http://localhost:8080/auth/spotify">
+          <button type="button" href="localhost:8080/auth/spotify">
+            Log In with Spotify
+          </button>
+        </a>
       </header>
     </div>
   );
