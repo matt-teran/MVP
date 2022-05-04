@@ -6,6 +6,7 @@ import Login from "./Login";
 import axios from "axios";
 import Logout from "./Logout";
 import convertFromMs from "./util/convertFromMs";
+import initializeSpotify from "./initializeSpotify";
 
 function App() {
   const [time, setTime] = useState();
@@ -17,6 +18,7 @@ function App() {
   const [progressiveTimeLimit, setProgressiveTimeLimit] = useState(timeLimit);
   const [breakTime, setBreakTime] = useState(300000);
   const [isBreakTime, setIsBreakTime] = useState(false);
+  const [spotifyPlayer, setSpotifyPlayer] = useState();
 
   useEffect(() => {
     if (isBreakTime) {
@@ -25,17 +27,19 @@ function App() {
           setBreakTime((prev) => prev - 1000);
         }, 1000);
       } else {
+        spotifyPlayer.resume();
         alert("Time to study!!");
         setIsBreakTime(false);
         toggleSession();
       }
     } else {
-      setBreakTime(5000);
+      setBreakTime(300000);
     }
   }, [isBreakTime, breakTime]);
 
   useEffect(() => {
     if (sessionTime >= progressiveTimeLimit && isStudying) {
+      spotifyPlayer.pause();
       alert("break time!!!");
       clearTimeout(timerId);
       setIsStudying(false);
@@ -66,6 +70,7 @@ function App() {
         if (res.data.username) {
           setTime(res.data.studyTime);
           setLoggedIn(true);
+          setSpotifyPlayer(initializeSpotify(res.data.accessToken));
         }
       })
       .catch((err) => {
@@ -77,6 +82,7 @@ function App() {
     if (isStudying) {
       clearTimeout(timerId);
     } else {
+      spotifyPlayer.playURI();
       incrementStopwatch();
     }
     setIsStudying((prevIsStudying) => !prevIsStudying);
@@ -114,7 +120,10 @@ function App() {
       .post("/api/signup", form)
       .then((response) => {
         console.log(response);
-        setLoggedIn(true);
+        if (response.data.success) {
+          setTime(0);
+          setLoggedIn(true);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -151,8 +160,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Signup register={registerHandler} />
-        <Login login={loginHandler} />
+        {/* <Signup register={registerHandler} />
+        <Login login={loginHandler} /> */}
+        <a href="http://localhost:8080/auth/spotify">
+          <button type="button" href="localhost:8080/auth/spotify">
+            Log In with Spotify
+          </button>
+        </a>
       </header>
     </div>
   );

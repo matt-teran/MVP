@@ -27,7 +27,7 @@ router.post("/signup", function (req, res) {
     new User({
       email: req.body.email,
       username: req.body.username,
-      studyTime: req.body.studyTime,
+      studyTime: 0,
     }),
     req.body.password,
     function (err, user) {
