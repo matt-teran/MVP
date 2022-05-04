@@ -39,7 +39,7 @@ passport.use(
       console.log("done: ", done);
       User.findOneAndUpdate(
         { email: profile._json.email },
-        { spotifyId: profile._json.id }
+        { spotifyId: profile._json.id, accessToken }
       )
         .then((data) => {
           if (data === null) {
@@ -49,6 +49,7 @@ passport.use(
                 username: profile._json.id,
                 studyTime: 0,
                 spotifyId: profile._json.id,
+                accessToken,
               }),
               accessToken,
               function (err, user) {
@@ -78,7 +79,13 @@ app.use("/api", router);
 app.get(
   "/auth/spotify",
   passport.authenticate("spotify", {
-    scope: ["user-read-email"],
+    scope: [
+      "user-read-email",
+      "user-modify-playback-state",
+      "user-read-playback-state",
+      "user-read-currently-playing",
+      "streaming",
+    ],
     showDialog: true,
   })
 );
@@ -88,12 +95,15 @@ app.get(
   passport.authenticate("spotify", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect home.
+    // console.log(req.user);
     res.redirect("/");
   }
 );
 
 app.get("/", function (req, res) {
-  return res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+  return res
+    .send(req.user.accessToken)
+    .sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 app.listen(8080, function () {

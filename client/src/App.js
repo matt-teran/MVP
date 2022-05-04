@@ -6,6 +6,7 @@ import Login from "./Login";
 import axios from "axios";
 import Logout from "./Logout";
 import convertFromMs from "./util/convertFromMs";
+import initializeSpotify from "./initializeSpotify";
 
 function App() {
   const [time, setTime] = useState();
@@ -17,6 +18,7 @@ function App() {
   const [progressiveTimeLimit, setProgressiveTimeLimit] = useState(timeLimit);
   const [breakTime, setBreakTime] = useState(300000);
   const [isBreakTime, setIsBreakTime] = useState(false);
+  const [spotifyPlayer, setSpotifyPlayer] = useState();
 
   useEffect(() => {
     if (isBreakTime) {
@@ -25,6 +27,7 @@ function App() {
           setBreakTime((prev) => prev - 1000);
         }, 1000);
       } else {
+        spotifyPlayer.resume();
         alert("Time to study!!");
         setIsBreakTime(false);
         toggleSession();
@@ -36,6 +39,7 @@ function App() {
 
   useEffect(() => {
     if (sessionTime >= progressiveTimeLimit && isStudying) {
+      spotifyPlayer.pause();
       alert("break time!!!");
       clearTimeout(timerId);
       setIsStudying(false);
@@ -66,6 +70,7 @@ function App() {
         if (res.data.username) {
           setTime(res.data.studyTime);
           setLoggedIn(true);
+          setSpotifyPlayer(initializeSpotify(res.data.accessToken));
         }
       })
       .catch((err) => {
@@ -77,6 +82,7 @@ function App() {
     if (isStudying) {
       clearTimeout(timerId);
     } else {
+      spotifyPlayer.playURI();
       incrementStopwatch();
     }
     setIsStudying((prevIsStudying) => !prevIsStudying);

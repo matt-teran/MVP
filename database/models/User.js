@@ -7,6 +7,7 @@ var UserSchema = new Schema({
   username: { type: String, unique: true, required: true },
   studyTime: { type: Number, required: true },
   spotifyId: { type: String },
+  accessToken: { type: String, required: true },
 });
 
 // plugin for passport-local-mongoose
