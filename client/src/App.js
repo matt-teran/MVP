@@ -8,7 +8,7 @@ import axios from "axios";
 import Logout from "./Logout";
 
 function App() {
-  const [time, setTime] = useState(moment().startOf("date"));
+  const [time, setTime] = useState(0);
   const [isStudying, setIsStudying] = useState(false);
   const [timerId, setTimerId] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -37,7 +37,7 @@ function App() {
   const incrementStopwatch = () => {
     setTimerId(
       window.setTimeout(() => {
-        setTime(time.add(1, "s"));
+        setTime((prev) => prev + 1000);
         incrementStopwatch();
       }, 1000)
     );
