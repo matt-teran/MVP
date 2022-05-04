@@ -7,12 +7,28 @@ const router = express.Router();
 const User = require("../../database/models/User");
 
 router.get("/user", (req, res) => {
+  console.log(req.user);
   res.send(req.user);
+});
+router.post("/updateTime", (req, res) => {
+  req.user
+    .update({ studyTime: req.body.time })
+    .then((mongooseResponse) => {
+      console.log(mongooseResponse);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  res.send(`added ${req.body.time}ms`);
 });
 
 router.post("/signup", function (req, res) {
   User.register(
-    new User({ email: req.body.email, username: req.body.username }),
+    new User({
+      email: req.body.email,
+      username: req.body.username,
+      studyTime: req.body.studyTime,
+    }),
     req.body.password,
     function (err, user) {
       if (err) {
@@ -48,6 +64,7 @@ router.post("/login", passport.authenticate("local"), (req, res) => {
       res.json({
         success: true,
         status: "You are successfully logged in!",
+        studyTime: person.studyTime,
       });
     }
   );

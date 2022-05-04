@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState } from "react";
 export default function Signup({ register }) {
   const [username, setUsername] = useState("");
@@ -16,7 +15,7 @@ export default function Signup({ register }) {
   };
 
   const submitHandler = () => {
-    register({ username, email, password });
+    register({ username, email, password, studyTime: 0 });
   };
 
   return (

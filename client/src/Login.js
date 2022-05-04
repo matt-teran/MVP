@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-export default function Login() {
+export default function Login({ login }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -18,18 +18,7 @@ export default function Login() {
   const submitHandler = () => {
     // validate inputs
 
-    axios
-      .post("/api/login", {
-        username,
-        email,
-        password,
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    login({ username, password, email });
   };
 
   return (
