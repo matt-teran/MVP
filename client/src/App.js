@@ -13,18 +13,18 @@ function App() {
   const [isStudying, setIsStudying] = useState(false);
   const [timerId, setTimerId] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [sessionTime, setSessionTime] = useState(0);
-  const [timeLimit, setTimeLimit] = useState(1500000);
-  const [progressiveTimeLimit, setProgressiveTimeLimit] = useState(timeLimit);
+  const [sessionTime, setSessionTime] = useState(1500000);
+  const [remainingSessionTime, setRemainingSessionTime] = useState(sessionTime);
   const [breakTime, setBreakTime] = useState(300000);
+  const [remainingBreakTime, setRemainingBreakTime] = useState(breakTime);
   const [isBreakTime, setIsBreakTime] = useState(false);
   const [spotifyPlayer, setSpotifyPlayer] = useState();
 
   useEffect(() => {
     if (isBreakTime) {
-      if (breakTime >= 0) {
+      if (remainingBreakTime >= 0) {
         setTimeout(() => {
-          setBreakTime((prev) => prev - 1000);
+          setRemainingBreakTime((prev) => prev - 1000);
         }, 1000);
       } else {
         spotifyPlayer.resume();
@@ -33,23 +33,22 @@ function App() {
         toggleSession();
       }
     } else {
-      setBreakTime(300000);
+      setRemainingBreakTime(breakTime);
     }
-  }, [isBreakTime, breakTime]);
+  }, [isBreakTime, remainingBreakTime]);
 
   useEffect(() => {
-    if (sessionTime >= progressiveTimeLimit && isStudying) {
+    if (sessionTime <= 0 && isStudying) {
       spotifyPlayer.pause();
-      alert("break time!!!");
       clearTimeout(timerId);
+      setRemainingSessionTime(sessionTime);
+      alert("break time!!!");
       setIsStudying(false);
       setIsBreakTime(true);
-      setProgressiveTimeLimit((prev) => prev + timeLimit);
     }
   }, [timerId]);
 
   useEffect(() => {
-    console.log(time);
     if (loggedIn) {
       axios
         .post("/api/updateTime", { time })
@@ -91,8 +90,8 @@ function App() {
   const incrementStopwatch = () => {
     setTimerId(
       window.setTimeout(() => {
-        setSessionTime((prev) => {
-          return prev + 1000;
+        setRemainingSessionTime((prev) => {
+          return prev - 1000;
         });
         setTime((prev) => {
           return prev + 1000;
@@ -142,13 +141,59 @@ function App() {
       });
   };
 
+  const updateMinutesHandler = (event) => {
+    if (event.target.id === "session-time") {
+      let timeInMs;
+      if (event.target.value >= 180) {
+        timeInMs = 180 * 60 * 1000;
+      } else if (event.target.value <= 10) {
+        timeInMs = 10 * 60 * 1000;
+      } else {
+        timeInMs = event.target.value * 60 * 1000;
+      }
+      setSessionTime(timeInMs);
+      setRemainingSessionTime(timeInMs);
+    } else {
+      let timeInMs;
+      if (event.target.value >= 60) {
+        timeInMs = 60 * 60 * 1000;
+      } else if (event.target.value <= 1) {
+        timeInMs = 1 * 60 * 1000;
+      } else {
+        timeInMs = event.target.value * 60 * 1000;
+      }
+      setBreakTime(timeInMs);
+      setRemainingBreakTime(timeInMs);
+    }
+  };
+
   if (loggedIn)
     return (
       <div className="App">
         <header className="App-header">
           <h3>Total study time: {convertFromMs(time)}</h3>
-          <h1>Pomodoro time: {convertFromMs(sessionTime)}</h1>
-          <h1>Break time: {convertFromMs(breakTime)}</h1>
+          <h1>Pomodoro time: {convertFromMs(remainingSessionTime)}</h1>
+          <h1>Break time: {convertFromMs(remainingBreakTime)}</h1>
+          <label htmlFor="session-time">
+            Number of minutes to study before break:
+          </label>
+          <input
+            type="number"
+            min="10"
+            max="180"
+            id="session-time"
+            onChange={updateMinutesHandler}
+            disabled={isStudying}
+          />
+          <label htmlFor="break-time">Number of minutes to break for:</label>
+          <input
+            type="number"
+            min="1"
+            max="60"
+            id="break-time"
+            onChange={updateMinutesHandler}
+            disabled={isStudying}
+          />
           <button type="button" onClick={toggleSession}>
             Start Session
           </button>
