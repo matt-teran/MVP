@@ -39,6 +39,15 @@ export default function initializeSpotify(accessToken) {
     console.error(message);
   });
 
+  // player.addListener(
+  //   "player_state_changed",
+  //   ({ position, duration, track_window: { current_track } }) => {
+  //     console.log("Currently Playing", current_track);
+  //     console.log("Position in Song", position);
+  //     console.log("Duration of Song", duration);
+  //   }
+  // );
+
   player.playURI = function (playlist, song) {
     this._options.getOAuthToken((access_token) => {
       fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {

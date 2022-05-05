@@ -7,8 +7,32 @@ const router = express.Router();
 // importing User Schema
 const User = require("../../database/models/User");
 
+router.get("/searchPlaylists", (req, res) => {
+  // console.log(req.params);
+  // console.log(req.query);
+  axios
+    .get(`https://api.spotify.com/v1/search?type=playlist&market=US`, {
+      params: { q: req.query.q },
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+    })
+    .then(({ data }) => {
+      res.send(
+        data.playlists.items.map((playlist) => ({
+          image: playlist.images[0].url,
+          uri: playlist.uri,
+          name: playlist.name,
+          tracks: playlist.tracks,
+        }))
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 router.get("/getPlaylists", (req, res) => {
-  console.log(req.user);
   axios
     .get(
       "https://api.spotify.com/v1/browse/categories/chill/playlists?country=US",

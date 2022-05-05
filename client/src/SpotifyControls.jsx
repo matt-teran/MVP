@@ -1,5 +1,5 @@
-import { Layout, List, Avatar, Card, Space } from "antd";
-import React from "react";
+import { Layout, List, Avatar, Card, Space, Input, Affix } from "antd";
+import React, { useState } from "react";
 import NowPlaying from "./NowPlaying";
 import PlayControls from "./PlayControls";
 
@@ -8,15 +8,25 @@ export default function SpotifyControls({
   playlists,
   currentPlaylist,
   changePlaylist,
+  search,
 }) {
   const { Header, Content, Footer } = Layout;
-  const { Meta } = Card;
+  const { Search } = Input;
   return (
     <Layout style={{ height: "100vh", backgroundColor: "#001529" }}>
-      <Header style={{ display: "flex", alignItems: "center" }}>
-        <NowPlaying playlist={currentPlaylist} />
+      <Header
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-evenly",
+          height: "15vh",
+        }}
+      >
+        <NowPlaying playlist={currentPlaylist} spotifyPlayer={spotifyPlayer} />
+        <Search placeholder="Search Playlists" onSearch={search} />
       </Header>
-      <Content style={{ overflowY: "scroll" }}>
+      <Content style={{ overflowY: "scroll", height: "70vh" }}>
         <List
           style={{ marginInline: "auto", width: "60%" }}
           itemLayout="vertical"

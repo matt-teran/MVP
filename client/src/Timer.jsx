@@ -21,6 +21,7 @@ export default function Stopwatch({
   playlists,
   currentPlaylist,
   changePlaylistHandler,
+  search,
 }) {
   const { Header, Content, Footer, Sider } = Layout;
   return (
@@ -31,6 +32,7 @@ export default function Stopwatch({
           playlists={playlists}
           currentPlaylist={currentPlaylist}
           changePlaylist={changePlaylistHandler}
+          search={search}
         />
       </Sider>
       <Layout>
@@ -68,7 +70,7 @@ export default function Stopwatch({
             <Form>
               <Form.Item label="Focus Duration">
                 <InputMinutes
-                  min="10"
+                  min="1"
                   max="180"
                   defaultValue="25"
                   id="session-time"

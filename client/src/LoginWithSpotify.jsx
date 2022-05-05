@@ -14,7 +14,7 @@ export default function LoginWithSpotify() {
       </Row>
       <Row>
         <Col span={24}>
-          <Title level={4}>a workflow enhancer</Title>
+          <Title level={4}>a workflow enhancer by matt teran</Title>
         </Col>
       </Row>
       <Row>

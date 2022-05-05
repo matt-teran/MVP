@@ -5,15 +5,16 @@ import "./App.css";
 import axios from "axios";
 import initializeSpotify from "./initializeSpotify";
 import LoginWithSpotify from "./LoginWithSpotify";
+import FooterLinks from "./FooterLinks";
 
 function App() {
   const [time, setTime] = useState();
   const [isStudying, setIsStudying] = useState(false);
   const [timerId, setTimerId] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [sessionTime, setSessionTime] = useState(1500000);
+  const [sessionTime, setSessionTime] = useState(90000); // 1500000
   const [remainingSessionTime, setRemainingSessionTime] = useState(sessionTime);
-  const [breakTime, setBreakTime] = useState(300000);
+  const [breakTime, setBreakTime] = useState(60000); // 300000
   const [remainingBreakTime, setRemainingBreakTime] = useState(breakTime);
   const [isBreakTime, setIsBreakTime] = useState(false);
   const [spotifyPlayer, setSpotifyPlayer] = useState();
@@ -25,6 +26,7 @@ function App() {
   const [nowPlaying, setNowPlaying] = useState({
     uri: "spotify:track:7ffmWi5LOJLGsMbeRFYWHD",
   });
+  const [initialPlay, setInitialPlay] = useState(true);
 
   useEffect(() => {
     if (isBreakTime) {
@@ -33,7 +35,7 @@ function App() {
           setRemainingBreakTime((prev) => prev - 1000);
         }, 1000);
       } else {
-        spotifyPlayer.resume();
+        // spotifyPlayer.resume();
         alert("Time to study!!");
         setIsBreakTime(false);
         toggleSession();
@@ -48,7 +50,7 @@ function App() {
       spotifyPlayer.pause();
       clearTimeout(timerId);
       setRemainingSessionTime(sessionTime);
-      alert("break time!!!");
+      alert("Thank you RFC!!!");
       setIsStudying(false);
       setIsBreakTime(true);
     }
@@ -92,12 +94,14 @@ function App() {
   };
 
   const toggleSession = () => {
+    initialPlay && spotifyPlayer.playURI(currentPlaylist.uri);
     if (isStudying) {
       clearTimeout(timerId);
     } else {
-      spotifyPlayer.playURI(currentPlaylist.uri);
+      !initialPlay && spotifyPlayer.resume();
       incrementStopwatch();
     }
+    initialPlay && setInitialPlay(false);
     setIsStudying((prevIsStudying) => !prevIsStudying);
   };
 
@@ -158,6 +162,12 @@ function App() {
     setCurrentPlaylist(playlist);
   };
 
+  const searchHandler = (value) => {
+    axios.get(`/api/searchPlaylists?q=${value}`).then(({ data }) => {
+      setPlaylists(data);
+    });
+  };
+
   const { Header, Content, Footer } = Layout;
 
   if (loggedIn)
@@ -176,6 +186,7 @@ function App() {
         playlists={playlists}
         currentPlaylist={currentPlaylist}
         changePlaylistHandler={changePlaylistHandler}
+        search={searchHandler}
       />
     );
   return (
@@ -185,7 +196,9 @@ function App() {
         <Content className="no-auth-content">
           <LoginWithSpotify />
         </Content>
-        <Footer>Hire me</Footer>
+        <Footer>
+          <FooterLinks />
+        </Footer>
       </Layout>
     </div>
   );
