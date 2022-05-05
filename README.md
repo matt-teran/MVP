@@ -13,7 +13,7 @@ This web app will be a lightweight productivity companion that aims to improve e
   The music will default to [lofi hip hop music - beats to study/relax to](https://open.spotify.com/playlist/0vvXsWCC9xrXsKd4FyS8kM)
 - [x] Allow the user to select custom study/break intervals (i.e. 50/10; 90/30)
 - [x] Allow the user to select different Spotify generated playlists. The playlists will be listed and based on genre radios.
-- [ ] Allow the user to select a custom Spotify generated playlist (i.e. the user would be able to search for a song, and select the radio playlist
+- [x] Allow the user to select a custom Spotify generated playlist (i.e. the user would be able to search for a song, and select the radio playlist
   generated from that song)
 
 ## Features
@@ -27,9 +27,8 @@ This web app will be a lightweight productivity companion that aims to improve e
 
 ### Frontend
 
-- NextJS?
 - React
-- MaterialUI, Mantine, Ant Design
+- Ant Design
 
 ### Backend
 
@@ -40,16 +39,11 @@ This web app will be a lightweight productivity companion that aims to improve e
 ### Database
 
 - MongoDB w/ Mongoose.js
-- Firebase?
 
 ### Build Tools
 
 - Webpack
 
-### Testing
-
-- Jest
-
 ### Deployment
 
-- Vercel
+- 
