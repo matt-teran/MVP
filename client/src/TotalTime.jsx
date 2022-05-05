@@ -6,7 +6,7 @@ export default function TotalTime({ time }) {
   const { Title } = Typography;
   return (
     <Title style={{ color: "white" }} level={4}>
-      Total study time: {convertFromMs(time)}
+      Total Focus Time: {convertFromMs(time)}
     </Title>
   );
 }

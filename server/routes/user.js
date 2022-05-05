@@ -1,10 +1,59 @@
 // importing modules
+const axios = require("axios");
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
 // importing User Schema
 const User = require("../../database/models/User");
+
+router.get("/searchPlaylists", (req, res) => {
+  // console.log(req.params);
+  // console.log(req.query);
+  axios
+    .get(`https://api.spotify.com/v1/search?type=playlist&market=US`, {
+      params: { q: req.query.q },
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+    })
+    .then(({ data }) => {
+      res.send(
+        data.playlists.items.map((playlist) => ({
+          image: playlist.images[0].url,
+          uri: playlist.uri,
+          name: playlist.name,
+          tracks: playlist.tracks,
+        }))
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+router.get("/getPlaylists", (req, res) => {
+  axios
+    .get(
+      "https://api.spotify.com/v1/browse/categories/chill/playlists?country=US",
+      {
+        headers: {
+          Authorization: `Bearer ${req.user.accessToken}`,
+        },
+      }
+    )
+    .then(({ data }) => {
+      console.log(data);
+      res.send(
+        data.playlists.items.map((playlist) => ({
+          image: playlist.images[0].url,
+          uri: playlist.uri,
+          name: playlist.name,
+          tracks: playlist.tracks,
+        }))
+      );
+    });
+});
 
 router.get("/user", (req, res) => {
   console.log(req.user);

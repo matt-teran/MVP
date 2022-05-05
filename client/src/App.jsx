@@ -5,33 +5,37 @@ import "./App.css";
 import axios from "axios";
 import initializeSpotify from "./initializeSpotify";
 import LoginWithSpotify from "./LoginWithSpotify";
+import FooterLinks from "./FooterLinks";
 
 function App() {
   const [time, setTime] = useState();
   const [isStudying, setIsStudying] = useState(false);
   const [timerId, setTimerId] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [sessionTime, setSessionTime] = useState(1500000);
+  const [sessionTime, setSessionTime] = useState(90000); // 1500000
   const [remainingSessionTime, setRemainingSessionTime] = useState(sessionTime);
-  const [breakTime, setBreakTime] = useState(300000);
+  const [breakTime, setBreakTime] = useState(60000); // 300000
   const [remainingBreakTime, setRemainingBreakTime] = useState(breakTime);
   const [isBreakTime, setIsBreakTime] = useState(false);
   const [spotifyPlayer, setSpotifyPlayer] = useState();
-  // const [accessToken, setAccessToken] = useState();
-
-  // useEffect(() => {
-  //   if (typeof window.Spotify !== "undefined")
-  //     setSpotifyPlayer(initializeSpotify(accessToken));
-  // }, [typeof window.Spotify === "undefined"]);
+  const [playlists, setPlaylists] = useState([]);
+  const [currentPlaylist, setCurrentPlaylist] = useState({
+    uri: "spotify:playlist:0vvXsWCC9xrXsKd4FyS8kM",
+    name: "lofi hip hop music - beats to study/relax to",
+  });
+  const [nowPlaying, setNowPlaying] = useState({
+    uri: "spotify:track:7ffmWi5LOJLGsMbeRFYWHD",
+  });
+  const [initialPlay, setInitialPlay] = useState(true);
 
   useEffect(() => {
     if (isBreakTime) {
-      if (remainingBreakTime >= 0) {
+      if (remainingBreakTime >= 1) {
         setTimeout(() => {
           setRemainingBreakTime((prev) => prev - 1000);
         }, 1000);
       } else {
-        spotifyPlayer.resume();
+        // spotifyPlayer.resume();
         alert("Time to study!!");
         setIsBreakTime(false);
         toggleSession();
@@ -42,11 +46,11 @@ function App() {
   }, [isBreakTime, remainingBreakTime]);
 
   useEffect(() => {
-    if (sessionTime <= 0 && isStudying) {
+    if (remainingSessionTime <= 0 && isStudying) {
       spotifyPlayer.pause();
       clearTimeout(timerId);
       setRemainingSessionTime(sessionTime);
-      alert("break time!!!");
+      alert("Thank you RFC!!!");
       setIsStudying(false);
       setIsBreakTime(true);
     }
@@ -72,9 +76,8 @@ function App() {
         if (res.data.username) {
           setTime(res.data.studyTime);
           setLoggedIn(true);
-          // setAccessToken(res.data.accessToken);
           setTimeout(() => {
-            setSpotifyPlayer(initializeSpotify(res.data.accessToken));
+            connectToSpotify(res.data.accessToken);
           }, 2000);
         }
       })
@@ -83,13 +86,22 @@ function App() {
       });
   }, []);
 
+  const connectToSpotify = (token) => {
+    setSpotifyPlayer(initializeSpotify(token));
+    axios.get("/api/getPlaylists").then(({ data }) => {
+      setPlaylists(data);
+    });
+  };
+
   const toggleSession = () => {
+    initialPlay && spotifyPlayer.playURI(currentPlaylist.uri);
     if (isStudying) {
       clearTimeout(timerId);
     } else {
-      spotifyPlayer.playURI();
+      !initialPlay && spotifyPlayer.resume();
       incrementStopwatch();
     }
+    initialPlay && setInitialPlay(false);
     setIsStudying((prevIsStudying) => !prevIsStudying);
   };
 
@@ -105,34 +117,6 @@ function App() {
         incrementStopwatch();
       }, 1000)
     );
-  };
-
-  const loginHandler = (form) => {
-    axios
-      .post("/api/login", form)
-      .then(({ data }) => {
-        console.log(data);
-        setTime(data.studyTime);
-        setLoggedIn(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const registerHandler = (form) => {
-    axios
-      .post("/api/signup", form)
-      .then((response) => {
-        console.log(response);
-        if (response.data.success) {
-          setTime(0);
-          setLoggedIn(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const logoutHandler = () => {
@@ -173,6 +157,17 @@ function App() {
     }
   };
 
+  const changePlaylistHandler = (playlist) => {
+    spotifyPlayer.playURI(playlist.uri);
+    setCurrentPlaylist(playlist);
+  };
+
+  const searchHandler = (value) => {
+    axios.get(`/api/searchPlaylists?q=${value}`).then(({ data }) => {
+      setPlaylists(data);
+    });
+  };
+
   const { Header, Content, Footer } = Layout;
 
   if (loggedIn)
@@ -188,6 +183,10 @@ function App() {
         toggleSession={toggleSession}
         logoutHandler={logoutHandler}
         spotifyPlayer={spotifyPlayer}
+        playlists={playlists}
+        currentPlaylist={currentPlaylist}
+        changePlaylistHandler={changePlaylistHandler}
+        search={searchHandler}
       />
     );
   return (
@@ -197,7 +196,9 @@ function App() {
         <Content className="no-auth-content">
           <LoginWithSpotify />
         </Content>
-        <Footer>Hire me</Footer>
+        <Footer>
+          <FooterLinks />
+        </Footer>
       </Layout>
     </div>
   );

@@ -18,12 +18,22 @@ export default function Stopwatch({
   toggleSession,
   logoutHandler,
   spotifyPlayer,
+  playlists,
+  currentPlaylist,
+  changePlaylistHandler,
+  search,
 }) {
   const { Header, Content, Footer, Sider } = Layout;
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider width={350}>
-        <SpotifyControls spotifyPlayer={spotifyPlayer} />
+        <SpotifyControls
+          spotifyPlayer={spotifyPlayer}
+          playlists={playlists}
+          currentPlaylist={currentPlaylist}
+          changePlaylist={changePlaylistHandler}
+          search={search}
+        />
       </Sider>
       <Layout>
         <Header
@@ -60,7 +70,7 @@ export default function Stopwatch({
             <Form>
               <Form.Item label="Focus Duration">
                 <InputMinutes
-                  min="10"
+                  min="1"
                   max="180"
                   defaultValue="25"
                   id="session-time"

@@ -17,3 +17,6 @@
 .timer-content {
   /* height: 100vh; */
 }
+.ant-spin-nest-loading {
+  width: 65%;
+}
