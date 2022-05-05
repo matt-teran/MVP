@@ -3,26 +3,24 @@ import React from "react";
 import PlayControls from "./PlayControls";
 
 export default function SpotifyControls({ spotifyPlayer, playlists }) {
-  const { Content, Footer } = Layout;
+  const { Header, Content, Footer } = Layout;
   const { Meta } = Card;
   return (
     <Layout style={{ height: "100vh", backgroundColor: "#001529" }}>
-      <Content>
+      <Header />
+      <Content style={{ overflowY: "scroll" }}>
         <List
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={{ marginInline: "auto", width: "60%" }}
+          itemLayout="vertical"
           split={false}
+          grid={{ gutter: 16, column: 1 }}
           dataSource={playlists}
           renderItem={(playlist) => {
             return (
-              <List.Item>
-                <Card style={{ width: "60%" }}>
+              <List.Item style={{ minWidth: "60%" }}>
+                <Card hoverable style={{ margin: "auto", textAlign: "center" }}>
                   <List.Item.Meta
-                    style={{ color: "white" }}
+                    style={{ color: "white", alignItems: "center" }}
                     title={playlist.name}
                     avatar={
                       <Avatar shape="square" size={64} src={playlist.image} />
