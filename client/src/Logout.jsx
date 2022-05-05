@@ -1,10 +1,10 @@
 import React from "react";
-import axios from "axios";
+import { Button } from "antd";
 
 export default function Logout({ logout }) {
   return (
-    <button type="button" onClick={logout}>
+    <Button type="dashed" danger onClick={logout}>
       Logout
-    </button>
+    </Button>
   );
 }
