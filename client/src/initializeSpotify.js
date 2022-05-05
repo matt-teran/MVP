@@ -39,13 +39,13 @@ export default function initializeSpotify(accessToken) {
     console.error(message);
   });
 
-  player.playURI = function () {
+  player.playURI = function (playlist, song) {
     this._options.getOAuthToken((access_token) => {
       fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: "PUT",
         body: JSON.stringify({
-          context_uri: "spotify:playlist:0vvXsWCC9xrXsKd4FyS8kM",
-          offset: { uri: "spotify:track:7ffmWi5LOJLGsMbeRFYWHD" },
+          context_uri: playlist,
+          // offset: { uri: "spotify:track:7ffmWi5LOJLGsMbeRFYWHD" },
         }),
         headers: {
           "Content-Type": "application/json",

@@ -1,13 +1,21 @@
-import { Layout, List, Avatar, Card } from "antd";
+import { Layout, List, Avatar, Card, Space } from "antd";
 import React from "react";
+import NowPlaying from "./NowPlaying";
 import PlayControls from "./PlayControls";
 
-export default function SpotifyControls({ spotifyPlayer, playlists }) {
+export default function SpotifyControls({
+  spotifyPlayer,
+  playlists,
+  currentPlaylist,
+  changePlaylist,
+}) {
   const { Header, Content, Footer } = Layout;
   const { Meta } = Card;
   return (
     <Layout style={{ height: "100vh", backgroundColor: "#001529" }}>
-      <Header />
+      <Header style={{ display: "flex", alignItems: "center" }}>
+        <NowPlaying playlist={currentPlaylist} />
+      </Header>
       <Content style={{ overflowY: "scroll" }}>
         <List
           style={{ marginInline: "auto", width: "60%" }}
@@ -18,7 +26,11 @@ export default function SpotifyControls({ spotifyPlayer, playlists }) {
           renderItem={(playlist) => {
             return (
               <List.Item style={{ minWidth: "60%" }}>
-                <Card hoverable style={{ margin: "auto", textAlign: "center" }}>
+                <Card
+                  onClick={() => changePlaylist(playlist)}
+                  hoverable
+                  style={{ margin: "auto", textAlign: "center" }}
+                >
                   <List.Item.Meta
                     style={{ color: "white", alignItems: "center" }}
                     title={playlist.name}

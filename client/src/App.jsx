@@ -18,6 +18,13 @@ function App() {
   const [isBreakTime, setIsBreakTime] = useState(false);
   const [spotifyPlayer, setSpotifyPlayer] = useState();
   const [playlists, setPlaylists] = useState([]);
+  const [currentPlaylist, setCurrentPlaylist] = useState({
+    uri: "spotify:playlist:0vvXsWCC9xrXsKd4FyS8kM",
+    name: "lofi hip hop music - beats to study/relax to",
+  });
+  const [nowPlaying, setNowPlaying] = useState({
+    uri: "spotify:track:7ffmWi5LOJLGsMbeRFYWHD",
+  });
 
   useEffect(() => {
     if (isBreakTime) {
@@ -88,7 +95,7 @@ function App() {
     if (isStudying) {
       clearTimeout(timerId);
     } else {
-      spotifyPlayer.playURI();
+      spotifyPlayer.playURI(currentPlaylist.uri);
       incrementStopwatch();
     }
     setIsStudying((prevIsStudying) => !prevIsStudying);
@@ -106,34 +113,6 @@ function App() {
         incrementStopwatch();
       }, 1000)
     );
-  };
-
-  const loginHandler = (form) => {
-    axios
-      .post("/api/login", form)
-      .then(({ data }) => {
-        console.log(data);
-        setTime(data.studyTime);
-        setLoggedIn(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const registerHandler = (form) => {
-    axios
-      .post("/api/signup", form)
-      .then((response) => {
-        console.log(response);
-        if (response.data.success) {
-          setTime(0);
-          setLoggedIn(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const logoutHandler = () => {
@@ -174,6 +153,11 @@ function App() {
     }
   };
 
+  const changePlaylistHandler = (playlist) => {
+    spotifyPlayer.playURI(playlist.uri);
+    setCurrentPlaylist(playlist);
+  };
+
   const { Header, Content, Footer } = Layout;
 
   if (loggedIn)
@@ -190,6 +174,8 @@ function App() {
         logoutHandler={logoutHandler}
         spotifyPlayer={spotifyPlayer}
         playlists={playlists}
+        currentPlaylist={currentPlaylist}
+        changePlaylistHandler={changePlaylistHandler}
       />
     );
   return (
