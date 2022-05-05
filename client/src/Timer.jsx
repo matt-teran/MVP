@@ -18,12 +18,13 @@ export default function Stopwatch({
   toggleSession,
   logoutHandler,
   spotifyPlayer,
+  playlists,
 }) {
   const { Header, Content, Footer, Sider } = Layout;
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider width={350}>
-        <SpotifyControls spotifyPlayer={spotifyPlayer} />
+        <SpotifyControls spotifyPlayer={spotifyPlayer} playlists={playlists} />
       </Sider>
       <Layout>
         <Header

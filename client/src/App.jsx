@@ -17,16 +17,11 @@ function App() {
   const [remainingBreakTime, setRemainingBreakTime] = useState(breakTime);
   const [isBreakTime, setIsBreakTime] = useState(false);
   const [spotifyPlayer, setSpotifyPlayer] = useState();
-  // const [accessToken, setAccessToken] = useState();
-
-  // useEffect(() => {
-  //   if (typeof window.Spotify !== "undefined")
-  //     setSpotifyPlayer(initializeSpotify(accessToken));
-  // }, [typeof window.Spotify === "undefined"]);
+  const [playlists, setPlaylists] = useState([]);
 
   useEffect(() => {
     if (isBreakTime) {
-      if (remainingBreakTime >= 0) {
+      if (remainingBreakTime >= 1) {
         setTimeout(() => {
           setRemainingBreakTime((prev) => prev - 1000);
         }, 1000);
@@ -42,7 +37,7 @@ function App() {
   }, [isBreakTime, remainingBreakTime]);
 
   useEffect(() => {
-    if (sessionTime <= 0 && isStudying) {
+    if (remainingSessionTime <= 0 && isStudying) {
       spotifyPlayer.pause();
       clearTimeout(timerId);
       setRemainingSessionTime(sessionTime);
@@ -72,9 +67,8 @@ function App() {
         if (res.data.username) {
           setTime(res.data.studyTime);
           setLoggedIn(true);
-          // setAccessToken(res.data.accessToken);
           setTimeout(() => {
-            setSpotifyPlayer(initializeSpotify(res.data.accessToken));
+            connectToSpotify(res.data.accessToken);
           }, 2000);
         }
       })
@@ -82,6 +76,13 @@ function App() {
         console.log(err);
       });
   }, []);
+
+  const connectToSpotify = (token) => {
+    setSpotifyPlayer(initializeSpotify(token));
+    axios.get("/api/getPlaylists").then(({ data }) => {
+      setPlaylists(data);
+    });
+  };
 
   const toggleSession = () => {
     if (isStudying) {
@@ -188,6 +189,7 @@ function App() {
         toggleSession={toggleSession}
         logoutHandler={logoutHandler}
         spotifyPlayer={spotifyPlayer}
+        playlists={playlists}
       />
     );
   return (
