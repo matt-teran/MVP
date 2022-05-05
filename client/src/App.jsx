@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Stopwatch from "./Stopwatch";
+import { Layout } from "antd";
+import Timer from "./Timer";
 import "./App.css";
-import Signup from "./Signup";
-import Login from "./Login";
 import axios from "axios";
-import Logout from "./Logout";
-import convertFromMs from "./util/convertFromMs";
 import initializeSpotify from "./initializeSpotify";
+import LoginWithSpotify from "./LoginWithSpotify";
 
 function App() {
   const [time, setTime] = useState();
@@ -19,6 +17,12 @@ function App() {
   const [remainingBreakTime, setRemainingBreakTime] = useState(breakTime);
   const [isBreakTime, setIsBreakTime] = useState(false);
   const [spotifyPlayer, setSpotifyPlayer] = useState();
+  // const [accessToken, setAccessToken] = useState();
+
+  // useEffect(() => {
+  //   if (typeof window.Spotify !== "undefined")
+  //     setSpotifyPlayer(initializeSpotify(accessToken));
+  // }, [typeof window.Spotify === "undefined"]);
 
   useEffect(() => {
     if (isBreakTime) {
@@ -65,11 +69,13 @@ function App() {
     axios
       .get("/api/user")
       .then((res) => {
-        console.log(res);
         if (res.data.username) {
           setTime(res.data.studyTime);
           setLoggedIn(true);
-          setSpotifyPlayer(initializeSpotify(res.data.accessToken));
+          // setAccessToken(res.data.accessToken);
+          setTimeout(() => {
+            setSpotifyPlayer(initializeSpotify(res.data.accessToken));
+          }, 2000);
         }
       })
       .catch((err) => {
@@ -141,78 +147,58 @@ function App() {
       });
   };
 
-  const updateMinutesHandler = (event) => {
-    if (event.target.id === "session-time") {
+  const updateMinutesHandler = (value, id) => {
+    if (id === "session-time") {
       let timeInMs;
-      if (event.target.value >= 180) {
+      if (value >= 180) {
         timeInMs = 180 * 60 * 1000;
-      } else if (event.target.value <= 10) {
+      } else if (value <= 10) {
         timeInMs = 10 * 60 * 1000;
       } else {
-        timeInMs = event.target.value * 60 * 1000;
+        timeInMs = value * 60 * 1000;
       }
       setSessionTime(timeInMs);
       setRemainingSessionTime(timeInMs);
     } else {
       let timeInMs;
-      if (event.target.value >= 60) {
+      if (value >= 60) {
         timeInMs = 60 * 60 * 1000;
-      } else if (event.target.value <= 1) {
+      } else if (value <= 1) {
         timeInMs = 1 * 60 * 1000;
       } else {
-        timeInMs = event.target.value * 60 * 1000;
+        timeInMs = value * 60 * 1000;
       }
       setBreakTime(timeInMs);
       setRemainingBreakTime(timeInMs);
     }
   };
 
+  const { Header, Content, Footer } = Layout;
+
   if (loggedIn)
     return (
-      <div className="App">
-        <header className="App-header">
-          <h3>Total study time: {convertFromMs(time)}</h3>
-          <h1>Pomodoro time: {convertFromMs(remainingSessionTime)}</h1>
-          <h1>Break time: {convertFromMs(remainingBreakTime)}</h1>
-          <label htmlFor="session-time">
-            Number of minutes to study before break:
-          </label>
-          <input
-            type="number"
-            min="10"
-            max="180"
-            id="session-time"
-            onChange={updateMinutesHandler}
-            disabled={isStudying}
-          />
-          <label htmlFor="break-time">Number of minutes to break for:</label>
-          <input
-            type="number"
-            min="1"
-            max="60"
-            id="break-time"
-            onChange={updateMinutesHandler}
-            disabled={isStudying}
-          />
-          <button type="button" onClick={toggleSession}>
-            Start Session
-          </button>
-          <Logout logout={logoutHandler} />
-        </header>
-      </div>
+      <Timer
+        time={time}
+        sessionTime={sessionTime}
+        remainingSessionTime={remainingSessionTime}
+        breakTime={breakTime}
+        remainingBreakTime={remainingBreakTime}
+        update={updateMinutesHandler}
+        isStudying={isStudying}
+        toggleSession={toggleSession}
+        logoutHandler={logoutHandler}
+        spotifyPlayer={spotifyPlayer}
+      />
     );
-
   return (
     <div className="App">
-      <header className="App-header">
-        {/* <Signup register={registerHandler} />
-        <Login login={loginHandler} /> */}
-        <a href="http://localhost:8080/auth/spotify">
-          <button type="button" href="localhost:8080/auth/spotify">
-            Log In with Spotify
-          </button>
-        </a>
-      </header>
+      <Layout className="no-auth-layout">
+        <Header></Header>
+        <Content className="no-auth-content">
+          <LoginWithSpotify />
+        </Content>
+        <Footer>Hire me</Footer>
+      </Layout>
     </div>
   );
 }
