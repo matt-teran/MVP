@@ -36,6 +36,7 @@ router.get("/getPlaylists", (req, res) => {
       }
     )
     .then(({ data }) => {
+      console.log(data);
       res.send(
         data.playlists.items.map((playlist) => ({
           image: playlist.images[0].url,
@@ -47,6 +48,9 @@ router.get("/getPlaylists", (req, res) => {
     });
 });
 
+router.get("/user", (req, res) => {
+  res.send(req.user);
+});
 router.post("/updateTime", (req, res) => {
   req.user
     .update({ studyTime: req.body.time })
