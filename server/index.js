@@ -3,11 +3,10 @@ const path = require("path");
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
 const SpotifyStrategy = require("passport-spotify").Strategy;
 
 var { User } = require("../database/index");
-const router = require("./routes/user");
+const router = require("./routes/api");
 
 const app = express();
 
@@ -19,11 +18,9 @@ app.use(
     resave: false,
   })
 );
-
+app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.use(new LocalStrategy(User.authenticate()));
 passport.use(
   new SpotifyStrategy(
     {
@@ -32,11 +29,6 @@ passport.use(
       callbackURL: "http://localhost:8080/auth/spotify/callback",
     },
     function (accessToken, refreshToken, expires_in, profile, done) {
-      console.log("access token: ", typeof accessToken);
-      console.log("refresh token: ", refreshToken);
-      console.log("expires in: ", expires_in);
-      console.log("profile: ", profile._json.email);
-      console.log("done: ", done);
       User.findOneAndUpdate(
         { email: profile._json.email },
         { spotifyId: profile._json.id, accessToken }
@@ -70,8 +62,6 @@ passport.use(
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use(express.json());
-
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.use("/api", router);
@@ -94,8 +84,6 @@ app.get(
   "/auth/spotify/callback",
   passport.authenticate("spotify", { failureRedirect: "/login" }),
   function (req, res) {
-    // Successful authentication, redirect home.
-    // console.log(req.user);
     res.redirect("/");
   }
 );
