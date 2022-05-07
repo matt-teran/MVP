@@ -4,12 +4,12 @@ import React from "react";
 export default function Dashboard() {
   return (
     <Content>
-      <Timer />
+      {/* <Timer />
       <Timer />
       <ChangeDuration />
       <ChangeDuration />
       <StartSession />
-      <Logout />
+      <Logout /> */}
     </Content>
   );
 }
