@@ -20,7 +20,7 @@ export default function LoginWithSpotify() {
       <Row>
         <Col span={24}>
           <a
-            href="http://localhost:8080/auth/spotify"
+            href="/auth/spotify"
             style={{ height: "10vh" }}
           >
             <Button
