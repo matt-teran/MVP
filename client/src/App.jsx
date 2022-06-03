@@ -12,9 +12,9 @@ function App() {
   const [isStudying, setIsStudying] = useState(false);
   const [timerId, setTimerId] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [sessionTime, setSessionTime] = useState(90000); // 1500000
+  const [sessionTime, setSessionTime] = useState(1500000); // 1500000
   const [remainingSessionTime, setRemainingSessionTime] = useState(sessionTime);
-  const [breakTime, setBreakTime] = useState(60000); // 300000
+  const [breakTime, setBreakTime] = useState(300000); // 300000
   const [remainingBreakTime, setRemainingBreakTime] = useState(breakTime);
   const [isBreakTime, setIsBreakTime] = useState(false);
   const [spotifyPlayer, setSpotifyPlayer] = useState();

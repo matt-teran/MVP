@@ -5,8 +5,8 @@ import { GithubFilled, LinkedinFilled } from "@ant-design/icons";
 export default function FooterLinks() {
   return (
     <Space>
-      <Button icon={<GithubFilled />} shape="circle" type="primary" />
-      <Button icon={<LinkedinFilled />} shape="circle" type="primary" />
+      <Button type="link" href="https://www.github.com/matt-teran/Pomodoro-Buddy" icon={<GithubFilled />} shape="circle" />
+      <Button icon={<LinkedinFilled />} shape="circle" type="link" href="https://www.linkedin.com/in/matt-teran" />
     </Space>
   );
 }
